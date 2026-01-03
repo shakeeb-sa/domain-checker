@@ -1,191 +1,277 @@
 :root {
-  --bg-color: #f8f9fa;
-  --text-color: #212529;
-  --secondary-text-color: #6c757d;
-  --card-bg-color: #ffffff;
-  --border-color: #dee2e6;
-  --accent-color: #007bff;
-  --accent-hover-color: #0056b3;
-  --button-text-color: #ffffff;
-  --disabled-bg-color: #ced4da;
-  --success-color: #28a745;
-  --error-color: #dc3545;
-  --shadow-color: rgba(0, 0, 0, 0.075);
+  /* Cleanup.pictures Inspired Palette */
+  --bg-color: #111111;         /* Deep Black */
+  --surface-color: #1a1a1a;    /* Dark Gray Cards */
+  --surface-hover: #252525;
+  
+  --primary-color: #ccff00;    /* Neon Lime */
+  --primary-hover: #b3e600;
+  
+  --text-main: #ffffff;
+  --text-secondary: #888888;
+  --text-on-primary: #000000;  /* Black text on neon button */
+  
+  --border-color: #333333;
+  --border-active: #555555;
+  
+  --success-color: #ccff00;
+  --error-color: #ff4d4d;
+  
+  --radius: 16px;
+  --font-family: 'Outfit', sans-serif;
 }
 
-[data-theme="dark"] {
-  --bg-color: #121212;
-  --text-color: #e9e9e9;
-  --secondary-text-color: #a0a0a0;
-  --card-bg-color: #1e1e1e;
-  --border-color: #444;
-  --accent-color: #3a96ff;
-  --accent-hover-color: #5aa5ff;
-  --disabled-bg-color: #333;
-  --shadow-color: rgba(0, 0, 0, 0.2);
+/* Light Mode Overrides (Optional, if user toggles) */
+[data-theme="light"] {
+  --bg-color: #f4f4f5;
+  --surface-color: #ffffff;
+  --surface-hover: #f9fafb;
+  --primary-color: #000000;
+  --primary-hover: #333333;
+  --text-main: #18181b;
+  --text-secondary: #71717a;
+  --text-on-primary: #ffffff;
+  --border-color: #e4e4e7;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* ... keep your :root variables and [data-theme] sections as they are ... */
+
+* { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background-color: var(--bg-color);
-  color: var(--text-color);
-  transition: background-color 0.3s, color 0.3s;
+  color: var(--text-main);
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* FIX: Ensure React root takes full width */
+#root {
+  width: 100%;
+  min-height: 100vh;
 }
 
 .app-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%; /* Force full width */
 }
 
-/* Header */
+/* --- Header --- */
 .header {
-  background-color: var(--card-bg-color);
-  box-shadow: 0 2px 4px var(--shadow-color);
-  padding: 0 5vw;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  transition: background-color 0.3s;
+  width: 100%;
+  padding: 24px 40px;
+  display: flex;
+  justify-content: center; /* This centers the 'navbar' container */
+  background-color: var(--bg-color); /* Ensures header isn't transparent */
+  z-index: 10;
 }
 
 .navbar {
+  width: 100%;
+  /* Increased max-width so elements push to the edges on large screens */
+  max-width: 1400px; 
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Crucial: Pushes Logo Left, Toggle Right */
   align-items: center;
-  height: 70px;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
+/* PASTE YOUR LOGO CODE HERE 👇 */
 .logo {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--text-color);
+  align-items: center; 
+  gap: 12px;           
+  font-weight: 700;    
+  font-size: 1.5rem;   
+  letter-spacing: -0.5px; 
+  color: var(--text-main);
+  line-height: 1;      
+  user-select: none;   
 }
 
-.logo-icon { color: var(--accent-color); }
-
-.theme-switcher {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-color);
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.logo svg {
+  display: block; 
+  min-width: 28px; 
 }
-.theme-switcher:hover { background-color: rgba(128, 128, 128, 0.1); }
+/* 👆 END LOGO CODE */
 
-/* Main */
+/* Mobile Adjustment to keep it looking good on phones */
+@media (max-width: 600px) {
+  .header { 
+    padding: 16px 20px; 
+  }
+}
+
+/* ... keep .navbar, .logo, .theme-switcher as they are ... */
+
+/* --- Main Content (The Fix) --- */
 main {
+  flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
+  flex-direction: column;
+  align-items: center;     /* Horizontal Center */
+  justify-content: center; /* Vertical Center */
   padding: 40px 20px;
+  width: 100%;             /* Force full width */
 }
 
 .container {
-  background-color: var(--card-bg-color);
-  padding: 40px;
-  border-radius: 16px;
-  box-shadow: 0 8px 30px var(--shadow-color);
   width: 100%;
-  max-width: 600px;
+  max-width: 580px;
   text-align: center;
-  transition: background-color 0.3s;
+  margin: 0 auto; /* Extra safety for centering */
 }
 
-h1 { margin-bottom: 10px; font-size: 2rem; }
-p { color: var(--secondary-text-color); margin-bottom: 30px; line-height: 1.6; }
+/* ... rest of the CSS (h1, subtitle, cards, etc) remains the same ... */
 
-/* Inputs */
-.upload-section {
-  border: 2px dashed var(--border-color);
-  border-radius: 12px;
-  padding: 25px 20px;
-  margin-bottom: 25px;
-  transition: all 0.3s;
-  position: relative;
+h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  background: linear-gradient(180deg, #fff 0%, #aaa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+[data-theme="light"] h1 { background: none; -webkit-text-fill-color: var(--text-main); }
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 48px;
+  font-weight: 300;
 }
 
-.upload-section:hover, .upload-section.filled {
-  border-color: var(--accent-color);
-  background-color: rgba(0, 123, 255, 0.02);
-}
-
-.upload-section label {
-  font-weight: 600;
+/* --- Upload Cards --- */
+.upload-grid {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-  color: var(--text-color);
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.upload-card {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: left;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 }
 
-.upload-section input[type="file"] {
-  display: block;
-  width: 100%;
-  margin-top: 10px;
-  color: var(--text-color);
+.upload-card:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -10px rgba(204, 255, 0, 0.15);
 }
 
-.file-name {
-  display: block;
-  margin-top: 5px;
-  font-size: 0.9rem;
-  color: var(--success-color);
+.upload-card.active {
+  background: rgba(204, 255, 0, 0.05);
+  border-color: var(--primary-color);
+}
+
+.upload-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-main);
+  pointer-events: none; /* Let clicks pass to input */
+}
+
+.upload-input {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-status {
+  margin-left: auto;
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: var(--bg-color);
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
-/* Button */
+.upload-card.active .file-status {
+  background: var(--primary-color);
+  color: var(--text-on-primary);
+}
+
+/* --- Action Button --- */
 .process-btn {
-  background-color: var(--accent-color);
-  color: var(--button-text-color);
-  border: none;
-  padding: 15px 30px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 8px;
-  cursor: pointer;
+  background: var(--primary-color);
+  color: var(--text-on-primary);
   width: 100%;
-  transition: all 0.2s;
+  padding: 20px;
+  border-radius: 50px; /* Pill shape like cleanup.pictures */
+  border: none;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .process-btn:hover:not(:disabled) {
-  background-color: var(--accent-hover-color);
-  transform: translateY(-2px);
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(204, 255, 0, 0.4);
 }
 
 .process-btn:disabled {
-  background-color: var(--disabled-bg-color);
+  opacity: 0.3;
   cursor: not-allowed;
+  filter: grayscale(1);
 }
 
-/* Status */
-.status { margin-top: 20px; font-weight: 500; }
-.status.success { color: var(--success-color); }
-.status.error { color: var(--error-color); }
-.status.info { color: var(--accent-color); font-style: italic; }
+/* --- Status Messages --- */
+.status-msg {
+  margin-top: 24px;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.status-msg.success { color: var(--success-color); }
+.status-msg.error { color: var(--error-color); }
 
-/* Footer */
+/* --- Footer --- */
 .footer {
-  background-color: var(--card-bg-color);
-  color: var(--secondary-text-color);
-  padding: 30px 20px;
   text-align: center;
+  padding: 30px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
   border-top: 1px solid var(--border-color);
 }
 
-.footer .social-links { margin-bottom: 15px; display: flex; justify-content: center; gap: 20px; }
-.footer .social-links a { color: var(--secondary-text-color); transition: color 0.3s, transform 0.2s; }
-.footer .social-links a:hover { color: var(--accent-color); transform: translateY(-3px); }
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 12px;
+}
+.social-links a { color: var(--text-secondary); transition: 0.2s; }
+.social-links a:hover { color: var(--primary-color); }
+
+/* Mobile */
+@media (max-width: 600px) {
+  h1 { font-size: 2.2rem; }
+  .header { padding: 20px; }
+  .container { padding: 0 10px; }
+}

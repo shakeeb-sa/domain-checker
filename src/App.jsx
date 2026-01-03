@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getUrlsFromExcel, getRootDomain, generateOutputExcel } from './utils/excelProcessor';
-import { Moon, Sun, Filter, Github, Linkedin, Twitter, UploadCloud } from 'lucide-react';
+import { Moon, Sun, Layers, Github, Linkedin, Twitter, Upload, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
 import './App.css';
 
 function App() {
@@ -8,9 +8,8 @@ function App() {
   const [prospectFile, setProspectFile] = useState(null);
   const [status, setStatus] = useState({ msg: '', type: '' });
   const [isProcessing, setIsProcessing] = useState(false);
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark'); // Default to dark
 
-  // Handle Theme Change
   useEffect(() => {
     document.body.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
@@ -22,21 +21,14 @@ function App() {
     if (!existingFile || !prospectFile) return;
 
     setIsProcessing(true);
-    setStatus({ msg: 'Step 1/4: Reading existing links file...', type: 'info' });
+    setStatus({ msg: 'Reading files...', type: 'info' });
 
     try {
-      // 1. Process Existing
       const existingUrls = await getUrlsFromExcel(existingFile);
       const existingDomains = new Set(existingUrls.map(getRootDomain).filter(d => d));
       
-      setStatus({ msg: 'Step 2/4: Reading prospect links file...', type: 'info' });
-      
-      // 2. Process Prospects
       const prospectUrls = await getUrlsFromExcel(prospectFile);
 
-      setStatus({ msg: 'Step 3/4: Comparing domains...', type: 'info' });
-
-      // 3. Compare
       const uniqueProspects = [];
       const duplicateProspects = [];
       const processedProspectUrls = new Set();
@@ -55,24 +47,18 @@ function App() {
         }
       }
 
-      setStatus({ msg: 'Step 4/4: Generating report...', type: 'info' });
-      
-      // 4. Download
       generateOutputExcel(uniqueProspects, duplicateProspects);
       
       setStatus({ 
-        msg: `Success! Found ${uniqueProspects.length} unique domains. File downloaded.`, 
+        msg: `Done! ${uniqueProspects.length} unique domains found.`, 
         type: 'success' 
       });
 
     } catch (error) {
       console.error(error);
-      setStatus({ msg: `Error: ${error.message}`, type: 'error' });
+      setStatus({ msg: 'Error processing files. Check format.', type: 'error' });
     } finally {
       setIsProcessing(false);
-      // Optional: Reset inputs
-      // setExistingFile(null);
-      // setProspectFile(null);
     }
   };
 
@@ -81,8 +67,8 @@ function App() {
       <header className="header">
         <nav className="navbar">
           <div className="logo">
-            <Filter className="logo-icon" />
-            <span className="logo-text">DomainChecker</span>
+            <Layers color="var(--primary-color)" size={28} />
+            <span>DomainFilter</span>
           </div>
           <button onClick={toggleTheme} className="theme-switcher" aria-label="Toggle Theme">
             {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
@@ -92,35 +78,43 @@ function App() {
 
       <main>
         <div className="container">
-          <h1>Domain Uniqueness Checker</h1>
-          <p>Find new link-building opportunities by filtering out domains you already have.</p>
+          <h1>Clean up your prospect lists.</h1>
+          <p className="subtitle">Remove domains you have already contacted. Simple, private, and free.</p>
 
-          <div className={`upload-section ${existingFile ? 'filled' : ''}`}>
-            <label htmlFor="existing-file">
-              <UploadCloud size={20} style={{marginRight: '8px'}}/>
-              1. Upload Existing Links (.xlsx)
-            </label>
-            <input 
-              type="file" 
-              id="existing-file" 
-              accept=".xlsx"
-              onChange={(e) => setExistingFile(e.target.files[0])} 
-            />
-            {existingFile && <span className="file-name">{existingFile.name}</span>}
-          </div>
+          <div className="upload-grid">
+            {/* Card 1 */}
+            <div className={`upload-card ${existingFile ? 'active' : ''}`}>
+              <div className="upload-label">
+                <Upload size={24} color={existingFile ? 'var(--text-on-primary)' : 'var(--primary-color)'} />
+                <span>Upload Existing List</span>
+              </div>
+              <input 
+                className="upload-input"
+                type="file" 
+                accept=".xlsx"
+                onChange={(e) => setExistingFile(e.target.files[0])} 
+              />
+              <span className="file-status">
+                {existingFile ? existingFile.name : 'Select .xlsx'}
+              </span>
+            </div>
 
-          <div className={`upload-section ${prospectFile ? 'filled' : ''}`}>
-            <label htmlFor="prospect-file">
-               <UploadCloud size={20} style={{marginRight: '8px'}}/>
-               2. Upload Prospect Links (.xlsx)
-            </label>
-            <input 
-              type="file" 
-              id="prospect-file" 
-              accept=".xlsx"
-              onChange={(e) => setProspectFile(e.target.files[0])} 
-            />
-            {prospectFile && <span className="file-name">{prospectFile.name}</span>}
+            {/* Card 2 */}
+            <div className={`upload-card ${prospectFile ? 'active' : ''}`}>
+              <div className="upload-label">
+                <Upload size={24} color={prospectFile ? 'var(--text-on-primary)' : 'var(--primary-color)'} />
+                <span>Upload New Prospects</span>
+              </div>
+              <input 
+                className="upload-input"
+                type="file" 
+                accept=".xlsx"
+                onChange={(e) => setProspectFile(e.target.files[0])} 
+              />
+              <span className="file-status">
+                {prospectFile ? prospectFile.name : 'Select .xlsx'}
+              </span>
+            </div>
           </div>
 
           <button 
@@ -128,11 +122,16 @@ function App() {
             onClick={handleProcess} 
             disabled={!existingFile || !prospectFile || isProcessing}
           >
-            {isProcessing ? 'Processing...' : 'Process and Find Unique URLs'}
+            {isProcessing ? 'Processing...' : (
+              <>
+                Filter Domains <ArrowRight size={24} />
+              </>
+            )}
           </button>
 
           {status.msg && (
-            <div className={`status ${status.type}`}>
+            <div className={`status-msg ${status.type}`}>
+              {status.type === 'success' ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
               {status.msg}
             </div>
           )}
@@ -145,7 +144,7 @@ function App() {
           <a href="#"><Linkedin size={20} /></a>
           <a href="#"><Github size={20} /></a>
         </div>
-        <p>&copy; {new Date().getFullYear()} DomainChecker. All Rights Reserved.</p>
+        <p>No data is sent to servers. Everything processes in your browser.</p>
       </footer>
     </div>
   );
